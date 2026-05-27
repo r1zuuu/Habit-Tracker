@@ -14,7 +14,11 @@ export default function HabitTracker(){
     }
 
     const handleSubmit = () => {
+        if(inputValue.trim() == ""){
+            return
+        }
         setHabits([...habits, {id: Date.now(), name: inputValue}])
+        setInputValue("")
     }
 
     return(
