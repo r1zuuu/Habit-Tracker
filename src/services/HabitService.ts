@@ -13,3 +13,6 @@ export async function fetchUnique(id: number){
 export async function postHabit(habit: Omit<Habit, 'id'>) {
   return db.habit.create({ data: habit })
 }
+export async function deleteHabit(id: number){
+  return db.habit.delete({where : {id}})
+}
