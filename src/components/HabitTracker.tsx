@@ -2,7 +2,7 @@
 import { useHabitTracker } from "@/hooks/useHabitTracker";
 
 export default function HabitTracker() {
-    const { inputValue, habits, habitWithId, setInputValue, setIdNote, handleSubmit, handleIdClick } = useHabitTracker();
+    const { inputValue, habits, habitWithId, setInputValue, setIdNote, handleSubmit, handleIdClick, handleDelete } = useHabitTracker();
 
     return (
         <div className="">
@@ -15,7 +15,10 @@ export default function HabitTracker() {
             <button onClick={handleSubmit}>Dodaj habit</button>
             <ul>
                 {habits.map((habit) => (
-                    <li key={habit.id}>{habit.name}</li>
+                    <div className="flex flex-col">
+                        <li key={habit.id}>{habit.name}</li>
+                        <button key={habit.id} onClick={() => handleDelete(habit.id)}>Delete habit</button>
+                    </div>
                 ))}
             </ul>
             <div>Enter the note id</div>

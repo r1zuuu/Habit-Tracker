@@ -11,18 +11,33 @@ export function useHabitTracker() {
     const [idNote, setIdNote] = useState(0);
     const [habitWithId, setHabitWithId] = useState<Habit | null>(null);
 
+    const loadHabits = async () => {
+        try {
+            const res = await fetch('/api/habits');
+            const data = await res.json();
+            setHabits(data);
+        } catch (error) {
+            console.error("Błąd ładowania habitów", error);
+        }
+    }
+
     useEffect(() => {
-        const loadHabits = async () => {
-            try {
-                const res = await fetch('/api/habits');
-                const data = await res.json();
-                setHabits(data);
-            } catch (error) {
-                console.error("Błąd ładowania habitów", error);
-            }
-        };
-        loadHabits();
-    }, []);
+        loadHabits()
+    }, [])
+
+
+    // useEffect(() => {
+    //     const loadHabits = async () => {
+    //         try {
+    //             const res = await fetch('/api/habits');
+    //             const data = await res.json();
+    //             setHabits(data);
+    //         } catch (error) {
+    //             console.error("Błąd ładowania habitów", error);
+    //         }
+    //     };
+    //     loadHabits();
+    // }, []);
 
     const handleSubmit = async () => {
         if (inputValue.trim() === "") return;
@@ -51,6 +66,19 @@ export function useHabitTracker() {
             console.error(`Błąd przy ładowaniu habitu o id ${idNote}`, error);
         }
     };
+    const handleDelete = async (id: number) => {
+        try{
+            const res = await fetch(`/api/habits/${id}`, {
+                method: 'DELETE',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({id: id}),
+            });
+            loadHabits()
+        }catch(error){
+            console.error(`Błąd przy usuwaniu notatki o id: ${id}`)
+        }
+
+    }
 
     return {
         inputValue,
@@ -60,5 +88,6 @@ export function useHabitTracker() {
         setIdNote,
         handleSubmit,
         handleIdClick,
+        handleDelete
     };
 }
