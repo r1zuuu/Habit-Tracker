@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 interface Habit{
     id: number;
@@ -7,8 +7,13 @@ interface Habit{
 }
 export default function HabitTracker(){
     const [inputValue, setInputValue] = useState("");
-    const [habits, setHabits] = useState<Habit[]>([]);
+    const [habits, setHabits] = useState<Habit[]>([])
 
+    useEffect(() => {
+        
+        return() => {
+        }
+    }, [habits])
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setInputValue(e.target.value)
     }
