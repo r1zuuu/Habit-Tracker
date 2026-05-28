@@ -15,9 +15,9 @@ export default function HabitTracker() {
             <button onClick={handleSubmit}>Dodaj habit</button>
             <ul>
                 {habits.map((habit) => (
-                    <div className="flex flex-col">
-                        <li key={habit.id}>{habit.name}</li>
-                        <button key={habit.id} onClick={() => handleDelete(habit.id)}>Delete habit</button>
+                    <div key={habit.id} className="flex flex-col">
+                        <li>{habit.name}</li>
+                        <button onClick={() => handleDelete(habit.id)}>Delete habit</button>
                     </div>
                 ))}
             </ul>
