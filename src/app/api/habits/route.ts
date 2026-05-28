@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server'
-import { fetchAllHabits, postHabit, fetchUnique } from '@/services/HabitService'
+import { fetchAllHabits, postHabit } from '@/services/HabitService'
 
 export async function GET() {
   const habits = await fetchAllHabits()
