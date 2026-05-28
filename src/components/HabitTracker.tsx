@@ -5,24 +5,39 @@ interface Habit{
     id: number;
     name: string;
 }
+
 export default function HabitTracker(){
     const [inputValue, setInputValue] = useState("");
     const [habits, setHabits] = useState<Habit[]>([])
 
     useEffect(() => {
-        
-        return() => {
+        const loadHabits = async () => {
+            try {
+                const res = await fetch('/api/habits')
+                const data = await res.json()
+                setHabits(data)
+            } catch(error){
+                console.error("Błąd ładowania habitów", error)
+            }
         }
-    }, [habits])
+        loadHabits()
+    }, [])
+
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setInputValue(e.target.value)
     }
 
-    const handleSubmit = () => {
+    const handleSubmit = async () => {
         if(inputValue.trim() == ""){
             return
         }
-        setHabits([...habits, {id: Date.now(), name: inputValue}])
+        const res = await fetch('/api/habits', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ name: inputValue, userId: 1 }),
+        })
+        const newHabit = await res.json()
+        setHabits([...habits, newHabit])
         setInputValue("")
     }
 
@@ -32,7 +47,7 @@ export default function HabitTracker(){
             <button onClick={handleSubmit}>Submit</button>
             <ul>
                 {habits.map(
-                    (habit) => 
+                    (habit) =>
                     (
                         <li key={habit.id}>{habit.name}</li>
                     )
@@ -40,7 +55,4 @@ export default function HabitTracker(){
             </ul>
         </div>
     )
-
-    
-    
 }
