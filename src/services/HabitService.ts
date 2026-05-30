@@ -16,3 +16,9 @@ export async function postHabit(habit: Omit<Habit, 'id'>) {
 export async function deleteHabit(id: number){
   return db.habit.delete({where : {id}})
 }
+export async function putHabit(id: number, habit: Omit<Habit, 'id'>){
+  return db.habit.update({
+    where: { id },
+    data: habit
+  })
+}
