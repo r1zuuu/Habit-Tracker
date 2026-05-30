@@ -10,6 +10,8 @@ export function useHabitTracker() {
     const [habits, setHabits] = useState<Habit[]>([]);
     const [idNote, setIdNote] = useState(0);
     const [habitWithId, setHabitWithId] = useState<Habit | null>(null);
+    const [editingId, setEditingId] = useState<number | null>(null);
+    const [editValue, setEditValue] = useState("");
 
     const loadHabits = async () => {
         try {
@@ -24,20 +26,6 @@ export function useHabitTracker() {
     useEffect(() => {
         loadHabits()
     }, [])
-
-
-    // useEffect(() => {
-    //     const loadHabits = async () => {
-    //         try {
-    //             const res = await fetch('/api/habits');
-    //             const data = await res.json();
-    //             setHabits(data);
-    //         } catch (error) {
-    //             console.error("Błąd ładowania habitów", error);
-    //         }
-    //     };
-    //     loadHabits();
-    // }, []);
 
     const handleSubmit = async () => {
         if (inputValue.trim() === "") return;
@@ -61,33 +49,51 @@ export function useHabitTracker() {
             const res = await fetch(`/api/habits/${idNote}`);
             const data = await res.json();
             setHabitWithId(data);
-            console.log(data);
         } catch (error) {
             console.error(`Błąd przy ładowaniu habitu o id ${idNote}`, error);
         }
     };
+
     const handleDelete = async (id: number) => {
-        try{
-            const res = await fetch(`/api/habits/${id}`, {
+        try {
+            await fetch(`/api/habits/${id}`, {
                 method: 'DELETE',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({id: id}),
             });
-            loadHabits()
-        }catch(error){
-            console.error(`Błąd przy usuwaniu notatki o id: ${id}`)
+            loadHabits();
+        } catch (error) {
+            console.error(`Błąd przy usuwaniu habitu o id: ${id}`)
         }
+    }
 
+    const handleEdit = async (id: number) => {
+        try {
+            await fetch(`/api/habits/${id}`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ name: editValue, userId: 1 }),
+            });
+            setEditingId(null);
+            setEditValue("");
+            loadHabits();
+        } catch (error) {
+            console.error(`Błąd przy edycji habitu o id: ${id}`)
+        }
     }
 
     return {
         inputValue,
         habits,
         habitWithId,
+        editingId,
+        editValue,
         setInputValue,
         setIdNote,
+        setEditingId,
+        setEditValue,
         handleSubmit,
         handleIdClick,
-        handleDelete
+        handleDelete,
+        handleEdit,
     };
 }
