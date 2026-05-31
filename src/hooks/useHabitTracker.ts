@@ -1,4 +1,5 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 
 interface Habit {
     id: number;
@@ -6,38 +7,28 @@ interface Habit {
 }
 
 export function useHabitTracker() {
+    const queryClient = useQueryClient();
     const [inputValue, setInputValue] = useState("");
-    const [habits, setHabits] = useState<Habit[]>([]);
     const [idNote, setIdNote] = useState(0);
     const [habitWithId, setHabitWithId] = useState<Habit | null>(null);
     const [editingId, setEditingId] = useState<number | null>(null);
     const [editValue, setEditValue] = useState("");
 
-    const loadHabits = async () => {
-        try {
-            const res = await fetch('/api/habits');
-            const data = await res.json();
-            setHabits(data);
-        } catch (error) {
-            console.error("Błąd ładowania habitów", error);
-        }
-    }
-
-    useEffect(() => {
-        loadHabits()
-    }, [])
+    const { data: habits = [], isPending, error } = useQuery<Habit[]>({
+        queryKey: ['habits'],
+        queryFn: () => fetch('/api/habits').then(res => res.json())
+    });
 
     const handleSubmit = async () => {
         if (inputValue.trim() === "") return;
         try {
-            const res = await fetch('/api/habits', {
+            await fetch('/api/habits', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ name: inputValue, userId: 1 }),
             });
-            const newHabit = await res.json();
-            setHabits([...habits, newHabit]);
             setInputValue("");
+            queryClient.invalidateQueries({ queryKey: ['habits'] }); // odswieza liste habitow po uzyciu useQuery
         } catch (error) {
             console.error("Błąd dodawania habitu", error);
         }
@@ -60,7 +51,7 @@ export function useHabitTracker() {
                 method: 'DELETE',
                 headers: { 'Content-Type': 'application/json' },
             });
-            loadHabits();
+            queryClient.invalidateQueries({ queryKey: ['habits'] }); // odswieza liste habitow po uzyciu useQuery
         } catch (error) {
             console.error(`Błąd przy usuwaniu habitu o id: ${id}`)
         }
@@ -75,7 +66,7 @@ export function useHabitTracker() {
             });
             setEditingId(null);
             setEditValue("");
-            loadHabits();
+            queryClient.invalidateQueries({ queryKey: ['habits'] }); // odswieza liste habitow po uzyciu useQuery
         } catch (error) {
             console.error(`Błąd przy edycji habitu o id: ${id}`)
         }
@@ -87,6 +78,8 @@ export function useHabitTracker() {
         habitWithId,
         editingId,
         editValue,
+        isPending,
+        error,
         setInputValue,
         setIdNote,
         setEditingId,
