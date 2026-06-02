@@ -1,9 +1,6 @@
-import { useState, useEffect } from "react";
-
-interface Habit {
-    id: number;
-    name: string;
-}
+import { useState } from "react";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { Habit } from "@/types";
 
 export function useHabitTracker() {
     const queryClient = useQueryClient();

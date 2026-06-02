@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server'
 import { fetchAllHabits, postHabit } from '@/services/HabitService'
+import { HabitSchema } from '@/types'
 
 export async function GET() {
   const habits = await fetchAllHabits()
@@ -7,7 +8,7 @@ export async function GET() {
 }
 
 export async function POST(request: Request) {
-  const body = await request.json()
+  const body = HabitSchema.parse(await request.json())
   const habit = await postHabit({ name: body.name, userId: body.userId })
   return NextResponse.json(habit)
 }
