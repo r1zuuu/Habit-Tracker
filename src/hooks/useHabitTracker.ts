@@ -1,11 +1,6 @@
 import { useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-
-interface Habit {
-    id: number;
-    name: string;
-}
-
+import { Habit } from '@/types/index'
 export function useHabitTracker() {
     const queryClient = useQueryClient();
     const [inputValue, setInputValue] = useState("");
@@ -33,7 +28,7 @@ export function useHabitTracker() {
             console.error("Błąd dodawania habitu", error);
         }
     };
-
+    // Do zaimplementowania: useMutation
     const handleIdClick = async () => {
         if (idNote <= 0) return;
         try {
