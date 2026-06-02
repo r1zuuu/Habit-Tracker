@@ -1,6 +1,10 @@
-import { useState } from "react";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { Habit } from '@/types/index'
+import { useState, useEffect } from "react";
+
+interface Habit {
+    id: number;
+    name: string;
+}
+
 export function useHabitTracker() {
     const queryClient = useQueryClient();
     const [inputValue, setInputValue] = useState("");
